@@ -23,7 +23,11 @@ def load_langgraph_agenticai_app():
         st.error("User inputs are not available. Please check the UI configuration.")
         return
     
-    user_message = st.chat_input("Enter your message here:")
+    #Text input for user message
+    if st.session_state.IsFetchButtonClicked:
+        user_message = st.session_state.timeframe
+    else:
+        user_message = st.chat_input("Enter your message here:")
 
     if user_message:
         try:
