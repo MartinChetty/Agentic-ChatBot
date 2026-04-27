@@ -1,11 +1,11 @@
 from langgraph.graph import StateGraph
-from src.langgraphagenticai.state.state import State
+from ..state.state import State
 from langgraph.graph import START, END
-from src.langgraphagenticai.nodes.basic_chatbot_node import BasicChatbotNode
-from src.langgraphagenticai.tools.search_tool import get_tools, create_tool_node
-from langgraph.prebuilt import tools_condition,ToolNode
-from src.langgraphagenticai.nodes.chat_with_tool_node import ChatWithToolNode
-from src.langgraphagenticai.nodes.ai_news_node import AINewsNode
+from ..nodes.basic_chatbot_node import BasicChatbotNode
+from ..tools.search_tool import get_tools, create_tool_node
+from langgraph.prebuilt import tools_condition
+from ..nodes.chat_with_tool_node import ChatWithToolNode
+from ..nodes.ai_news_node import AINewsNode
 
 
 
@@ -44,7 +44,7 @@ class GraphBuilder:
 
         #Define the chatbot node with the LLM and tool node
         obj_chatbot_with_node = ChatWithToolNode(llm)
-        chatbot_node=obj_chatbot_with_node.creat_chatbot(tools)
+        chatbot_node = obj_chatbot_with_node.create_chatbot(tools)
 
 
         self.graph_builder.add_node("chatbot",chatbot_node)
@@ -91,9 +91,11 @@ class GraphBuilder:
         """
         if usecase == "Basic Chatbot":
             self.basic_chatbot_build_graph()
-        if usecase == "Chatbot with WebSearch":
+        elif usecase == "Chatbot with WebSearch":
             self.chatbot_with_websearch_build_graph()
-        if usecase == "AI News Summarizer":
+        elif usecase == "AI News Summarizer":
             self.ai_news_summarizer_build_graph()
+        else:
+            raise ValueError(f"Unsupported use case: {usecase}")
         
         return self.graph_builder.compile()

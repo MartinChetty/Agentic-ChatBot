@@ -1,4 +1,14 @@
-from src.langgraphagenticai.state.state import State
+from langchain_core.messages import SystemMessage
+from ..state.state import State
+
+SYSTEM_PROMPT = SystemMessage(
+    content=(
+        "You are a helpful AI assistant with access to web search. "
+        "Use search to answer questions that require current or factual information. "
+        "Always cite your sources when using search results."
+    )
+)
+
 
 class ChatWithToolNode:
     """
@@ -8,19 +18,7 @@ class ChatWithToolNode:
     def __init__(self, model):
         self.llm = model
 
-    def process(self, state: State) -> dict:
-        """
-        Processes the state using the chatbot logic enhanced with tool integration.
-        """
-        user_input = state["messages"][-1] if state["messages"] else ""
-        llm_response = self.llm.invoke([{"role": "user", "content": user_input}])
-
-        #simulate tool specific response handling
-        tools_response = f"Tool Integration for input: {user_input}"
-
-        return {"messages":[llm_response, tools_response]}
-    
-    def creat_chatbot(self, tools):
+    def create_chatbot(self, tools):
         """
         returns a chatbot node with tool integration.
         """
@@ -28,10 +26,11 @@ class ChatWithToolNode:
 
         def chatbot_node(state: State):
             """
-            Chatbot logic for processing the input state and returining the response.
+            Chatbot node that prepends a system prompt before invoking the LLM.
             """
-            return {"messages":[llm_with_tools.invoke(state["messages"])]}
-        
+            messages = [SYSTEM_PROMPT] + list(state["messages"])
+            return {"messages": [llm_with_tools.invoke(messages)]}
+
         return chatbot_node
 
 

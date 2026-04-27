@@ -14,4 +14,5 @@ def create_tool_node(tools):
     """
     tool_node = ToolNode(tools=tools)
     return tool_node
+    return tool_node
 
